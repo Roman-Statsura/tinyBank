@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment</title>
+</head>
+<body>
+<form action="#" th:action="@{/account-payment/{id}(id=${id})}" th:object="${payment}" method="post">
+    <label for="value">Total</label>
+    <input type="number" th:field="*{value}" id="value" placeholder="value" required>
+    <span th:if="${paymentError}" th:utext="${paymentError.message}"></span>
+    <br/>
+    <label for="targetId">Account number for transfer</label>
+    <input type="number" th:field="*{targetId}" id="targetId" placeholder="targetId" required>
+    <span th:if="${accountIdError}" th:utext="${accountIdError.message}"></span>
+    <br/>
+    <input type="submit" value="Do Payment">
+</form>
+</body>
+</html>

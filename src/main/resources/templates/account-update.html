@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Update add</title>
+</head>
+<body>
+<form action="#" th:action="@{/account-update/{id}(id=${account.client.id})}" th:object="${account}" method="post">
+    <label for="id">ID</label>
+    <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
+    <br/>
+    <label for="balance">Balance</label>
+    <input type="number" th:field="*{balance}" id="balance" placeholder="balance">
+    <span th:if="${#fields.hasErrors('balance')}" th:errors="*{balance}">Balance Error</span>
+    <br/>
+    <label for="openDate">Open Date</label>
+    <input type="date" th:field="*{openDate}" id="openDate" placeholder="openDate">
+    <span th:if="${#fields.hasErrors('openDate')}" th:errors="*{openDate}">OpenDate Error</span>
+    <br/>
+    <label for="closeDate">Close Date</label>
+    <input type="date" th:field="*{closeDate}" id="closeDate" placeholder="closeDate">
+    <span th:if="${#fields.hasErrors('closeDate')}" th:errors="*{closeDate}">CloseDate Error</span>
+    <span th:if="${error}" th:utext="${error.message}"></span>
+    <br/>
+    <label for="status">Status</label>
+    <select th:field="*{status}" id="status">
+        <option value="OPEN">OPEN</option>
+        <option value="CLOSED">CLOSED</option>
+        <option value="SUSPEND">SUSPEND</option>
+    </select>
+    <br/>
+    <input type="submit" value="Update account">
+    <p><a href="/clients">Clients</a></p>
+</form>
+</body>
+</html>

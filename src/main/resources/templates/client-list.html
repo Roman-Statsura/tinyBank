@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients</title>
+    <style>
+        td{border: 1px solid black;}
+        th{border: 2px solid black;}
+        a{text-decoration: none; border: 1px solid black;}
+        .options{color: red;}
+        .create-button{color: green;}
+        .account-link{color: blue;}
+    </style>
+</head>
+<body>
+<div th:switch="${clients}">
+    <h2 th:case="null">No client found!</h2>
+    <div th:case="*">
+        <h2>Clients</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Username</th>
+                <th>Birth Date</th>
+                <th>Accounts</th>
+                <th>Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="client : ${clients}">
+                <td th:text="${client.id}"></td>
+                <td th:text="${client.name}"></td>
+                <td th:text="${client.surname}"></td>
+                <td th:text="${client.username}"></td>
+                <td th:text="${client.birthDate}"></td>
+                <td><a class="account-link" th:href="@{account-list/{id}(id=${client.id})}">Link to Accounts</a></td>
+                <td>
+                    <a class="options" th:href="@{client-update/{id}(id=${client.id})}">Edit</a>
+                    <a class="options" th:href="@{client-delete/{id}(id=${client.id})}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p><a class="create-button" href="/client-create">Create client</a></p>
+</div>
+</body>
+</html>

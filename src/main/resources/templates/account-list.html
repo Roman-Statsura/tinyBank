@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Accounts</title>
+    <style>
+        td{border: 1px solid black;}
+        th{border: 2px solid black;}
+        a{text-decoration: none; border: 1px solid black;}
+        .options{color: red;}
+        .payment{color: blue;}
+        .create-button{color: green;}
+    </style>
+</head>
+<body>
+<div th:switch="${accounts.isEmpty}">
+    <h2 th:case="true">No accounts found!</h2>
+    <div th:case="false">
+        <h2>Accounts</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Balance</th>
+                <th>Open Date</th>
+                <th>Close Date</th>
+                <th>Status</th>
+                <th>Owner</th>
+                <th>Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="account : ${accounts}">
+                <td th:text="${account.id}"></td>
+                <td th:text="${account.balance}"></td>
+                <td th:text="${account.openDate}"></td>
+                <td th:text="${account.closeDate}"></td>
+                <td th:text="${account.status}"></td>
+                <td th:text="${account.client.surname}"></td>
+                <td>
+                    <a class="options" th:href="@{/account-update/{id}(id=${account.id})}">Edit</a>
+                    <a class="options" th:href="@{/account-delete/{id}(id=${account.id})}">Delete</a>
+                    <a class="payment" th:href="@{/account-payment/{id}(id=${account.id})}">Payment</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p><a class="create-button" th:href="@{/account-create/{clId}(clId=${clId})}">Add account</a></p>
+    <p><a href="/clients">back</a></p>
+</div>
+</body>
+</html>

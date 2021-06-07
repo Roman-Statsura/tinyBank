@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="#" th:action="@{/client-create}" th:object="${clientForm}" method="post">
+    <label for="name">Name</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Name">
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</span>
+    <br/>
+    <label for="surname">Surname</label>
+    <input type="text" th:field="*{surname}" id="surname" placeholder="surname" >
+    <span th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname Error</span>
+    <br/>
+    <label for="username">Username</label>
+    <input type="text" th:field="*{username}" id="username" placeholder="username">
+    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span>
+    <span th:if="${error}" th:utext="${error.message}"></span>
+    <br/>
+    <label for="password">Password</label>
+    <input type="text" th:field="*{password}" id="password" placeholder="password">
+    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span>
+    <br/>
+    <label for="birthDate">Birth Date</label>
+    <input type="date" th:field="*{birthDate}" id="birthDate" placeholder="birthDate">
+    <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}">BirthDate Error</span>
+    <br/>
+    <input type="submit" value="Create client">
+</form>
+</body>
+</html>
