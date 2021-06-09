@@ -4,15 +4,17 @@ import com.example.tinybank.errors.AccountCreationException;
 import com.example.tinybank.errors.AccountNotFoundException;
 import com.example.tinybank.errors.PaymentException;
 import com.example.tinybank.model.Account;
-import com.example.tinybank.service.AccountService;
-import com.example.tinybank.service.ClientService;
-import com.example.tinybank.utils.AccountStatus;
+import com.example.tinybank.model.Audit;
+import com.example.tinybank.model.dto.AccountForm;
+import com.example.tinybank.model.dto.CustomError;
+import com.example.tinybank.model.dto.Payment;
+import com.example.tinybank.service.impl.AccountServiceImpl;
+import com.example.tinybank.service.impl.AuditServiceImpl;
+import com.example.tinybank.service.impl.ClientServiceImpl;
+import com.example.tinybank.utils.AuditAction;
 import com.example.tinybank.utils.Constants;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.tinybank.utils.ObjectType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,33 +22,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 public class AccountController {
-    private final AccountService accountService;
-    private final ClientService clientService;
+    private final AccountServiceImpl accountServiceImpl;
+    private final ClientServiceImpl clientServiceImpl;
+    private final AuditServiceImpl auditServiceImpl;
 
     @Autowired
-    public AccountController(AccountService accountService, ClientService clientService) {
-        this.accountService = accountService;
-        this.clientService = clientService;
+    public AccountController(AccountServiceImpl accountServiceImpl, ClientServiceImpl clientServiceImpl, AuditServiceImpl auditServiceImpl) {
+        this.accountServiceImpl = accountServiceImpl;
+        this.clientServiceImpl = clientServiceImpl;
+        this.auditServiceImpl = auditServiceImpl;
     }
     @GetMapping("account-list/{id}")
     public String findAllAccountByClient(@PathVariable("id") Integer id,Model model){
-        List<Account> accounts = accountService.finAllByClientId(id);
+        List<Account> accounts = accountServiceImpl.finAllByClientId(id);
         model.addAttribute("accounts", accounts);
         model.addAttribute("clId",id);
         return "account-list";
     }
     @GetMapping("/account-delete/{id}")
     public String deleteAccount(@PathVariable("id") Integer id){
-        accountService.deleteById(id);
+        accountServiceImpl.deleteById(id);
+        Audit audit = auditServiceImpl.createAudit(id,ObjectType.ACCOUNT,new Date(),
+                AuditAction.DELETE,0d);
+        auditServiceImpl.saveAudit(audit);
         return Constants.REDIRECT_TO_CLIENTS_PAGE;
     }
 
@@ -62,10 +66,14 @@ public class AccountController {
             return createAccountForm(id,model,accountForm);
         }
         try {
-            var client = clientService.findById(id);
+            var client = clientServiceImpl.findById(id);
             Account account = new Account(accountForm);
             account.setClient(client);
-            accountService.saveAccount(account);
+            accountServiceImpl.saveAccount(account);
+
+            Audit audit = auditServiceImpl.createAudit(account.getId(),ObjectType.ACCOUNT,new Date(),
+                    AuditAction.CREATE,account.getBalance());
+            auditServiceImpl.saveAudit(audit);
         }
         catch (AccountCreationException e){
             model.addAttribute("error",new CustomError(e.getMessage()));
@@ -75,28 +83,38 @@ public class AccountController {
     }
     @GetMapping("/account-update/{id}")
     public String updateAccountForm(@PathVariable("id") Integer id,Model model) throws AccountNotFoundException {
-        Account account = accountService.findById(id);
-        model.addAttribute("account",account);
+        Account account = accountServiceImpl.findById(id);
+        model.addAttribute("accountForm",new AccountForm(account));
         return Constants.ACCOUNT_UPDATE_PAGE;
     }
-    @PostMapping("/account-update/{id}")
-    public String updateAccount(@PathVariable("id") Integer id,@Valid Account account,
-                                BindingResult bindingResult, Model model){
-        account.setClient(clientService.findById(id));
+    @PostMapping("/account-update")
+    public String updateAccount(@Valid AccountForm accountForm,
+                                BindingResult bindingResult, Model model) throws AccountNotFoundException {
+        Account account = accountServiceImpl.findById(accountForm.getId());
         if (bindingResult.hasErrors()){
-            model.addAttribute("account",account);
+            model.addAttribute("accountForm",accountForm);
             return Constants.ACCOUNT_UPDATE_PAGE;
         }
-        account.setClient(clientService.findById(id));
         try {
-            accountService.saveAccount(account);
+            Audit audit = null;
+            if (!account.getBalance().equals(accountForm.getBalance())){
+                account.setBalance(accountForm.getBalance());
+                audit = auditServiceImpl.createAudit(account.getId(),ObjectType.ACCOUNT,new Date(),
+                        AuditAction.UPDATE,account.getBalance());
+            }
+            account.setOpenDate(accountForm.getOpenDate());
+            account.setCloseDate(accountForm.getCloseDate());
+            account.setStatus(accountForm.getStatus());
+
+            accountServiceImpl.saveAccount(account);
+            auditServiceImpl.saveAudit(audit);
         }
         catch (AccountCreationException e){
-            model.addAttribute("account",account);
+            model.addAttribute("accountForm",accountForm);
             model.addAttribute("error",new CustomError(e.getMessage()));
             return Constants.ACCOUNT_UPDATE_PAGE;
         }
-        return "redirect:/account-list/{id}";
+        return String.format("redirect:/account-list/%d",account.getClient().getId());
     }
     @GetMapping("/account-payment/{id}")
     public String openPaymentForm(@PathVariable("id") Integer id, Payment payment, Model model){
@@ -110,7 +128,7 @@ public class AccountController {
             return openPaymentForm(id,payment,model);
         }
         try {
-            accountService.makePayment(id, payment.getTargetId(), payment.getValue());
+            accountServiceImpl.makePayment(id, payment.getTargetId(), payment.getValue());
         }
         catch (PaymentException e){
             model.addAttribute("paymentError",new CustomError(e.getMessage()));
@@ -121,41 +139,5 @@ public class AccountController {
             return Constants.ACCOUNT_PAYMENT_PAGE;
         }
         return Constants.REDIRECT_TO_CLIENTS_PAGE;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class Payment{
-        @NotNull(message = "enter id")
-        private Integer targetId;
-        @NotNull(message = "enter value")
-        private Long value;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class AccountForm {
-        @NotNull(message = "enter balance")
-        @Min(value = 0, message = "balance cannot be less than zero")
-        private Double balance;
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        @Temporal(TemporalType.DATE)
-        @NotNull(message = "Enter date")
-        private Date openDate;
-        @DateTimeFormat(pattern = "yyyy-MM-dd")
-        @Temporal(TemporalType.DATE)
-        @NotNull(message = "Enter date")
-        private Date closeDate;
-        @Enumerated(EnumType.STRING)
-        private AccountStatus status;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    private static class CustomError {
-        private String message;
     }
 }

@@ -1,6 +1,6 @@
 package com.example.tinybank.model;
 
-import com.example.tinybank.controller.ClientController;
+import com.example.tinybank.model.dto.ClientForm;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "client")
 @Getter
-@Setter
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,26 +43,44 @@ public class Client {
     @Column(name = "surname")
     private String surname;
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<Account> accounts;
 
-    public Client(ClientController.ClientForm clientForm){
+    public Client(ClientForm clientForm){
         setName(clientForm.getName());
         setSurname(clientForm.getSurname());
         setUsername(clientForm.getUsername());
         setPassword(clientForm.getPassword());
         setBirthDate(clientForm.getBirthDate());
     }
-    public void setCorrectFields(){
-        if (name!=null && surname!=null && username!=null) {
-            String newName = getName().trim().toLowerCase(Locale.ROOT);
-            setName(newName.substring(0, 1).toUpperCase() + newName.substring(1));
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-            String newSurname = getSurname().trim().toLowerCase(Locale.ROOT);
-            setSurname(newSurname.substring(0, 1).toUpperCase() + newSurname.substring(1));
+    public void setUsername(String username) {
+        this.username = username.trim();
+    }
 
-            setUsername(getUsername().trim());
-        }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setName(String name) {
+        String newName = name.trim().toLowerCase(Locale.ROOT);
+        this.name = newName.substring(0, 1).toUpperCase() + newName.substring(1);
+    }
+
+    public void setSurname(String surname) {
+        String newSurname = surname.trim().toLowerCase(Locale.ROOT);
+        this.surname = newSurname.substring(0, 1).toUpperCase() + newSurname.substring(1);
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
     }
 }
 

@@ -17,6 +17,15 @@ CREATE TABLE account(
                         FOREIGN KEY (client_id) REFERENCES client(id) ON DELETE CASCADE
 );
 
+CREATE TABLE audit(
+                      id SERIAL NOT NULL PRIMARY KEY,
+                      object_id INT NOT NULL,
+                      object_type VARCHAR(10),
+                      action_date DATE NOT NULL,
+                      audit_action VARCHAR(10),
+                      new_value DECIMAL NOT NULL
+);
+
 INSERT INTO client(username, password, birth_date, name, surname) VALUES ('andrey','andrey', '1990-11-15','Andrey', 'Andreev');
 INSERT INTO client(username, password, birth_date, name, surname) VALUES ('vadim','vadim', '1970-05-12','Vadim', 'Vadimov');
 INSERT INTO client(username, password, birth_date, name, surname) VALUES ('zhenya','zhenya', '2000-07-19','Zhenya', 'Zhenev');
@@ -31,3 +40,6 @@ INSERT INTO account(balance, open_date, close_date, status, client_id) VALUES ( 
 INSERT INTO account(balance, open_date, close_date, status, client_id) VALUES ( 50000.00, '2021-05-20', '2024-05-05', 'OPEN', 4);
 INSERT INTO account(balance, open_date, close_date, status, client_id) VALUES ( 60000.00, '2021-05-20', '2024-05-05', 'OPEN', 5);
 INSERT INTO account(balance, open_date, close_date, status, client_id) VALUES ( 70000.00, '2018-05-20', '2021-05-20', 'CLOSED', 6);
+
+
+

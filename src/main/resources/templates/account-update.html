@@ -5,7 +5,7 @@
     <title>Update add</title>
 </head>
 <body>
-<form action="#" th:action="@{/account-update/{id}(id=${account.client.id})}" th:object="${account}" method="post">
+<form action="#" th:action="@{/account-update}" th:object="${accountForm}" method="post">
     <label for="id">ID</label>
     <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
     <br/>

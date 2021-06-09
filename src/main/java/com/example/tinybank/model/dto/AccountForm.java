@@ -1,54 +1,44 @@
-package com.example.tinybank.model;
+package com.example.tinybank.model.dto;
 
-import com.example.tinybank.model.dto.AccountForm;
+import com.example.tinybank.model.Account;
 import com.example.tinybank.utils.AccountStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Entity
-@Table(name = "account")
-@Getter
-@Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+@Data
+public class AccountForm {
     private Integer id;
-    @Column(name = "balance")
     @NotNull(message = "enter balance")
     @Min(value = 0, message = "balance cannot be less than zero")
     private Double balance;
-    @Column(name = "open_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     @NotNull(message = "Enter date")
     private Date openDate;
-    @Column(name = "close_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     @NotNull(message = "Enter date")
     private Date closeDate;
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @ManyToOne()
-    @JoinColumn(name = "client_id")
-    private Client client;
-
-    public Account(AccountForm accountForm) {
-        setBalance(accountForm.getBalance());
-        setOpenDate(accountForm.getOpenDate());
-        setCloseDate(accountForm.getCloseDate());
-        setStatus(accountForm.getStatus());
+    public AccountForm(Account account){
+        setId(account.getId());
+        setBalance(account.getBalance());
+        setOpenDate(account.getOpenDate());
+        setCloseDate(account.getCloseDate());
+        setStatus(account.getStatus());
     }
 }
-

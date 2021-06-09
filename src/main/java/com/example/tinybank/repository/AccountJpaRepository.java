@@ -14,5 +14,5 @@ public interface AccountJpaRepository extends JpaRepository<Account,Integer> {
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query(value = "DELETE FROM account WHERE id=:id",nativeQuery = true)
-    void deleteAccountCustom(@Param("id") Integer id);
+    void deleteAccountById(@Param("id") Integer id);
 }

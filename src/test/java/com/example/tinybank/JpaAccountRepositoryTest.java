@@ -1,7 +1,7 @@
 package com.example.tinybank;
 
 import com.example.tinybank.model.Account;
-import com.example.tinybank.service.AccountService;
+import com.example.tinybank.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class JpaAccountRepositoryTest {
     @Autowired
-    private AccountService accountService;
+    private AccountServiceImpl accountServiceImpl;
 
 //    @Test
 //    public void findByIdTest(){
@@ -22,12 +22,12 @@ public class JpaAccountRepositoryTest {
 //    }
     @Test
     public void findAllTest(){
-        List<Account> accounts = accountService.findAll();
+        List<Account> accounts = accountServiceImpl.findAll();
         assertEquals(3,accounts.size());
     }
     @Test
     public void finAllByClientIdTest(){
-        var list = accountService.finAllByClientId(1);
+        var list = accountServiceImpl.finAllByClientId(1);
         int x = 7;
     }
 }
