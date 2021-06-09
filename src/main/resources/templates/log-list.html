@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>List of logs</title>
+    <style>
+        td{border: 1px solid black;}
+        th{border: 2px solid black;}
+        a{text-decoration: none; border: 1px solid black;}
+        .value{color: green;}
+    </style>
+</head>
+<body>
+<div th:switch="${logs}">
+    <h2 th:case="null">No logs found!</h2>
+    <div th:case="*">
+        <h2>Logs</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Object id</th>
+                <th>Object type</th>
+                <th>Action date</th>
+                <th>Audit action</th>
+                <th>New value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logs}">
+                <td th:text="${log.id}"></td>
+                <td th:text="${log.objectId}"></td>
+                <td th:text="${log.objectType}"></td>
+                <td th:text="${log.actionDate}"></td>
+                <td th:text="${log.auditAction}"></td>
+                <td class="value" th:text="${log.newValue}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p><a href="/clients">back</a></p>
+</div>
+</body>
+</html>

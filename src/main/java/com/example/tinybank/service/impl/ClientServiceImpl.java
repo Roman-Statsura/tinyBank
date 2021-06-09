@@ -15,19 +15,27 @@ public class ClientServiceImpl implements ClientService {
     public ClientServiceImpl(ClientJpaRepository clientJpaRepository) {
         this.clientJpaRepository = clientJpaRepository;
     }
+
+    @Override
     public Client findById(Integer id){
         return clientJpaRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find client by ID - "+id));
     }
+
+    @Override
     public Client findByName(String name){
         return clientJpaRepository
                 .findClientByName(name);
     }
+
+    @Override
     public List<Client> findAll(){
         return clientJpaRepository
                 .findAll();
     }
+
+    @Override
     public void saveClient(Client client) throws ClientCreationException {
         Client client1 = clientJpaRepository.findClientByUsername(client.getUsername());
         if (client1 != null && !client1.getId().equals(client.getId()))
@@ -35,9 +43,13 @@ public class ClientServiceImpl implements ClientService {
         clientJpaRepository
                 .save(client);
     }
+
+    @Override
     public void deleteById(Integer id){
         clientJpaRepository.deleteClientCascade(id);
     }
+
+    @Override
     public Client findClientByUsername(String username){
         return clientJpaRepository
                 .findClientByUsername(username);

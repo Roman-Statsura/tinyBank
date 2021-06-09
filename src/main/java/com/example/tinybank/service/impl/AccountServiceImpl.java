@@ -23,29 +23,40 @@ public class AccountServiceImpl implements AccountService {
         this.accountJpaRepository = accountJpaRepository;
         this.auditService = auditService;
     }
+
+    @Override
     public Account findById(Integer id) throws AccountNotFoundException {
         return accountJpaRepository
                 .findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Cannot find account by ID - "+id));
     }
+
+    @Override
     public List<Account> findAll(){
         return accountJpaRepository
                 .findAll();
     }
+
+    @Override
     public List<Account> finAllByClientId(Integer id){
         return accountJpaRepository
                 .findAccountsByClient_Id(id);
     }
+
+    @Override
     public void saveAccount(Account account) throws AccountCreationException {
         if (account.getCloseDate().before(account.getOpenDate()))
             throw new AccountCreationException("The closing date cannot be earlier then the opening date");
         accountJpaRepository
                 .save(account);
     }
+
+    @Override
     public void deleteById(Integer id){
         accountJpaRepository.deleteById(id);
     }
 
+    @Override
     public void makePayment(Integer senderId,Integer recipientId,Long value) throws PaymentException, AccountCreationException, AccountNotFoundException {
         Account sender = findById(senderId);
         Account recipient = findById(recipientId);

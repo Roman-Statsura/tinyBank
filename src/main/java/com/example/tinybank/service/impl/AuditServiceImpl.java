@@ -17,20 +17,30 @@ public class AuditServiceImpl implements AuditService {
     public AuditServiceImpl(AuditJpaRepository auditJpaRepository) {
         this.auditJpaRepository = auditJpaRepository;
     }
+    @Override
     public Audit findById(Integer id){
         return auditJpaRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find audit by ID - "+id));
     }
+    @Override
     public List<Audit> findAll(){
         return auditJpaRepository
                 .findAll();
     }
+    @Override
     public void saveAudit(Audit audit){
         if (audit!=null)
             auditJpaRepository
                     .save(audit);
     }
+
+    @Override
+    public List<Audit> findAuditsByObjectId(Integer id) {
+        return auditJpaRepository
+                .findAuditsByObjectId(id);
+    }
+    @Override
     public Audit createAudit(Integer id, ObjectType objectType, Date date, AuditAction auditAction,
                              Double newValue){
         return Audit.builder()

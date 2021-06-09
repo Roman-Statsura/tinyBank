@@ -10,6 +10,7 @@
         .options{color: red;}
         .payment{color: blue;}
         .create-button{color: green;}
+        .logs{color: brown;}
     </style>
 </head>
 <body>
@@ -41,6 +42,7 @@
                     <a class="options" th:href="@{/account-update/{id}(id=${account.id})}">Edit</a>
                     <a class="options" th:href="@{/account-delete/{id}(id=${account.id})}">Delete</a>
                     <a class="payment" th:href="@{/account-payment/{id}(id=${account.id})}">Payment</a>
+                    <a class="logs" th:href="@{/log-list/{id}(id=${account.id})}">Logs</a>
                 </td>
             </tr>
             </tbody>

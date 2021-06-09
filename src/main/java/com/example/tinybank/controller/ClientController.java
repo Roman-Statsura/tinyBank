@@ -22,7 +22,6 @@ import java.util.List;
 public class ClientController {
     private final ClientServiceImpl clientServiceImpl;
 
-
     @Autowired
     public ClientController(ClientServiceImpl clientServiceImpl) {
         this.clientServiceImpl = clientServiceImpl;
