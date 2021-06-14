@@ -1,6 +1,5 @@
 package com.example.tinybank.controller;
 
-import com.example.tinybank.model.Audit;
 import com.example.tinybank.service.impl.AuditServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

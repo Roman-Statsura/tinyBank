@@ -43,7 +43,7 @@ public class ClientController {
             return Constants.CLIENT_CREATE_PAGE;
         }
         try {
-            Client client = new Client(clientForm);
+            var client = new Client(clientForm);
             clientServiceImpl.saveClient(client);
         }
         catch (ClientCreationException e){
@@ -59,7 +59,7 @@ public class ClientController {
     }
     @GetMapping("client-update/{id}")
     public String updateClientForm(@PathVariable("id") Integer id,Model model){
-        Client client = clientServiceImpl.findById(id);
+        var client = clientServiceImpl.findById(id);
         model.addAttribute("client",client);
         return Constants.CLIENT_UPDATE_PAGE;
     }

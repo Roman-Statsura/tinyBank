@@ -48,7 +48,7 @@ public class AccountController {
     @GetMapping("/account-delete/{id}")
     public String deleteAccount(@PathVariable("id") Integer id){
         accountServiceImpl.deleteById(id);
-        Audit audit = auditServiceImpl.createAudit(id,ObjectType.ACCOUNT,new Date(),
+        var audit = auditServiceImpl.createAudit(id,ObjectType.ACCOUNT,new Date(),
                 AuditAction.DELETE,0d);
         auditServiceImpl.saveAudit(audit);
         return Constants.REDIRECT_TO_CLIENTS_PAGE;
@@ -67,11 +67,11 @@ public class AccountController {
         }
         try {
             var client = clientServiceImpl.findById(id);
-            Account account = new Account(accountForm);
+            var account = new Account(accountForm);
             account.setClient(client);
             accountServiceImpl.saveAccount(account);
 
-            Audit audit = auditServiceImpl.createAudit(account.getId(),ObjectType.ACCOUNT,new Date(),
+            var audit = auditServiceImpl.createAudit(account.getId(),ObjectType.ACCOUNT,new Date(),
                     AuditAction.CREATE,account.getBalance());
             auditServiceImpl.saveAudit(audit);
         }
@@ -83,14 +83,14 @@ public class AccountController {
     }
     @GetMapping("/account-update/{id}")
     public String updateAccountForm(@PathVariable("id") Integer id,Model model) throws AccountNotFoundException {
-        Account account = accountServiceImpl.findById(id);
+        var account = accountServiceImpl.findById(id);
         model.addAttribute("accountForm",new AccountForm(account));
         return Constants.ACCOUNT_UPDATE_PAGE;
     }
     @PostMapping("/account-update")
     public String updateAccount(@Valid AccountForm accountForm,
                                 BindingResult bindingResult, Model model) throws AccountNotFoundException {
-        Account account = accountServiceImpl.findById(accountForm.getId());
+        var account = accountServiceImpl.findById(accountForm.getId());
         if (bindingResult.hasErrors()){
             model.addAttribute("accountForm",accountForm);
             return Constants.ACCOUNT_UPDATE_PAGE;

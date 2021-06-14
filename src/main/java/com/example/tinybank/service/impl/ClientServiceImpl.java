@@ -37,7 +37,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void saveClient(Client client) throws ClientCreationException {
-        Client client1 = clientJpaRepository.findClientByUsername(client.getUsername());
+        var client1 = clientJpaRepository.findClientByUsername(client.getUsername());
         if (client1 != null && !client1.getId().equals(client.getId()))
             throw new ClientCreationException("A Client with the same username already exists");
         clientJpaRepository
@@ -46,7 +46,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void deleteById(Integer id){
-        clientJpaRepository.deleteClientCascade(id);
+        clientJpaRepository.deleteById(id);
     }
 
     @Override

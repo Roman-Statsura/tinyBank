@@ -4,7 +4,6 @@ import com.example.tinybank.errors.AccountCreationException;
 import com.example.tinybank.errors.AccountNotFoundException;
 import com.example.tinybank.errors.PaymentException;
 import com.example.tinybank.model.Account;
-import com.example.tinybank.model.Audit;
 import com.example.tinybank.repository.AccountJpaRepository;
 import com.example.tinybank.service.AccountService;
 import com.example.tinybank.utils.AuditAction;
@@ -70,9 +69,9 @@ public class AccountServiceImpl implements AccountService {
         recipient.setBalance(recipient.getBalance() + value);
         saveAccount(sender);
         saveAccount(recipient);
-        Audit audit1 = auditService.createAudit(senderId,ObjectType.ACCOUNT,new Date(),
+        var audit1 = auditService.createAudit(senderId,ObjectType.ACCOUNT,new Date(),
                 AuditAction.UPDATE,sender.getBalance());
-        Audit audit2 = auditService.createAudit(recipientId,ObjectType.ACCOUNT,new Date(),
+        var audit2 = auditService.createAudit(recipientId,ObjectType.ACCOUNT,new Date(),
                 AuditAction.UPDATE,recipient.getBalance());
         auditService.saveAudit(audit1);
         auditService.saveAudit(audit2);

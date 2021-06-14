@@ -26,8 +26,8 @@ public class Audit {
     @Enumerated(EnumType.STRING)
     private ObjectType objectType;
     @Column(name = "action_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date actionDate;
     @Column(name = "audit_action")
     @Enumerated(EnumType.STRING)
