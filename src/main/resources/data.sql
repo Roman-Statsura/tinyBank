@@ -21,7 +21,7 @@ CREATE TABLE audit(
                       id SERIAL NOT NULL PRIMARY KEY,
                       object_id INT NOT NULL,
                       object_type VARCHAR(10),
-                      action_date DATE NOT NULL,
+                      action_date TIMESTAMP NOT NULL,
                       audit_action VARCHAR(10),
                       new_value DECIMAL NOT NULL
 );
